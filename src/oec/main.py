@@ -1,19 +1,20 @@
 import os
-from dataclasses import dataclass
 
+from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.trading.client import TradingClient
 from alpaca.trading.stream import TradingStream
 from dotenv import load_dotenv
-from prompt_toolkit.shortcuts import radiolist_dialog
+from prompt_toolkit.shortcuts import prompt, radiolist_dialog
+from prompt_toolkit.validation import ValidationError, Validator
+
+from .context import TradingContext
+from .order_entry import handle_order_entry
 
 
-@dataclass
-class TradingContext:
-    client: TradingClient
-    risk_pct: float
-    is_paper: bool
-    account_value: float
-    risk_reward: float
+class SideValidator(Validator):
+    def validate(self, document):
+        if document.text.split()[1].lower() not in ["buy", "sell"]:
+            raise ValidationError(message="Side must be buy or sell")
 
 
 async def update_handler(data):
@@ -33,6 +34,10 @@ if __name__ == "__main__":
         values=[(True, "Paper"), (False, "Live")],
     ).run()
 
+    risk_pct = float(prompt("Risk Percentage ", default="0.25")) / 100
+
+    risk_reward = float(prompt("Risk/Reward Ratio ", default="5"))
+
     api_key = (
         os.environ["ALPACA_API_KEY_PAPER"]
         if is_paper
@@ -45,11 +50,22 @@ if __name__ == "__main__":
     )
 
     client = TradingClient(api_key, secret_key, paper=is_paper, raw_data=False)
+    stock_data = StockHistoricalDataClient(api_key, secret_key)
 
     ctx = TradingContext(
         client=client,
-        risk_pct=0.025,
+        stock_data=stock_data,
+        risk_pct=risk_pct,
         is_paper=is_paper,
         account_value=float(client.get_account().last_equity or 0),
-        risk_reward=5,
+        risk_reward=risk_reward,
     )
+
+    while True:
+        order_input = prompt(
+            "Enter order (e.g., 'AAPL buy 143'): ", validator=SideValidator()
+        )
+
+        symbol, side, stop_loss = order_input.split()
+        stop_loss_price = float(stop_loss)
+        handle_order_entry(ctx, side, stop_loss_price, symbol)

@@ -1,7 +1,9 @@
+from alpaca.data.models import Quote
+from alpaca.data.requests import StockLatestQuoteRequest
 from alpaca.trading.enums import OrderClass, OrderSide, OrderType, TimeInForce
 from alpaca.trading.requests import OrderRequest, StopLossRequest, TakeProfitRequest
 
-from .main import TradingContext
+from .context import TradingContext
 from .risk_manager import define_risk_amount, define_take_profit_price
 
 
@@ -22,14 +24,26 @@ def get_side_object(side: str) -> OrderSide:
     return OrderSide.BUY if side == "buy" else OrderSide.SELL
 
 
+def get_quote(ctx: TradingContext, symbol: str) -> Quote:
+    return ctx.stock_data.get_latest_quote(
+        StockLatestQuoteRequest(symbol_or_symbols=symbol)
+    )[symbol]
+
+
+def get_latest_price(ctx: TradingContext, symbol: str, side: str) -> float:
+    quote = get_quote(ctx, symbol)
+
+    return quote.ask_price if side == "buy" else quote.bid_price
+
+
 def handle_order_entry(
     ctx: TradingContext,
     side: str,
-    entry_price: float,
     stop_loss_price: float,
     symbol: str,
 ):
     try:
+        entry_price = get_latest_price(ctx, symbol, side)
         validate_orders(side, entry_price, stop_loss_price)
         side = get_side_object(side)
         risk_amount = define_risk_amount(ctx)

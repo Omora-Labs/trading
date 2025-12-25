@@ -1,4 +1,4 @@
-from .main import TradingContext
+from .context import TradingContext
 
 
 def define_risk_amount(ctx: TradingContext) -> float:
@@ -21,5 +21,3 @@ def define_take_profit_price(
 
 def define_price_delta(entry_price: float, stop_loss_price: float) -> float:
     return abs(entry_price - stop_loss_price)
-
-
