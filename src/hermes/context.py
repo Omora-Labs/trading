@@ -13,4 +13,3 @@ class TradingContext:
     is_paper: bool
     account_value: float
     risk_reward: float
-    stream_task: asyncio.Task[None]

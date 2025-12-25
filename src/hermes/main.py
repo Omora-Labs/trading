@@ -2,12 +2,15 @@ import asyncio
 
 from prompt_toolkit.shortcuts import PromptSession
 
+from hermes.session.alpaca import start_stream
 from hermes.session.helpers import check_orders, select_order
 from hermes.session.main import get_trading_context
 from hermes.trading.order_entry import handle_order_entry
 
 
 async def main(ctx):
+    asyncio.create_task(start_stream(ctx.is_paper))
+
     print(
         f"""Creating session...
         Trading Mode: {ctx.is_paper}
@@ -30,9 +33,11 @@ async def main(ctx):
         input = await session.prompt_async("> ")
 
         if input == "orders":
-            print(ctx.client.get_orders())
+            orders = ctx.client.get_orders()
+            print(f"{orders}") if orders else print("No standing orders")
         elif input == "positions":
-            print(ctx.client.get_all_positions())
+            positions = ctx.client.get_all_positions()
+            print(f"{positions}") if positions else print("No standing orders")
         elif input == "cancel order":
             orders = check_orders(ctx)
             if not orders:
@@ -47,7 +52,6 @@ async def main(ctx):
                 print("No open orders")
                 continue
         elif input == "exit":
-            ctx.stream_task.cancel()
             break
         else:
             symbol, side, stop_loss = input.split()
