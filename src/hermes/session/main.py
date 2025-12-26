@@ -8,6 +8,10 @@ def get_trading_context() -> TradingContext:
     client, stock_data = get_alpaca_clients(is_paper)
     account_value = get_account_value(client)
 
+    session_type = "Paper" if is_paper else "Live"
+
+    print(f"Starting a {session_type} session now... \n")
+
     return TradingContext(
         client=client,
         stock_data=stock_data,

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from alpaca.data.historical import StockHistoricalDataClient
+from alpaca.data.historical import OptionHistoricalDataClient, StockHistoricalDataClient
 from alpaca.trading.client import TradingClient
 
 
@@ -8,6 +8,7 @@ from alpaca.trading.client import TradingClient
 class TradingContext:
     client: TradingClient
     stock_data: StockHistoricalDataClient
+    option_data: OptionHistoricalDataClient
     risk_pct: float
     is_paper: bool
     account_value: float
