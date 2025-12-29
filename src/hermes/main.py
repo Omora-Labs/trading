@@ -2,6 +2,8 @@ import asyncio
 import json
 import os
 
+import polars as pl
+from alpaca.trading.requests import GetOrdersRequest
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.shortcuts import PromptSession
 
@@ -10,11 +12,12 @@ from hermes.session.alpaca import start_stream
 from hermes.session.main import get_trading_context
 from hermes.trading.orders.main import handle_order_entry
 from hermes.trading.orders.utils import get_latest_price
+from hermes.utils import arranging_orders_for_printing
 
 
 async def main(ctx):
     session_details = f"""
-    Trading Mode: {ctx.is_paper}
+    Trading Mode: {"Paper" if ctx.is_paper else "Live"}
     Risk Percentage: {ctx.risk_pct * 100}%
     Risk Reward: {ctx.risk_reward}
     Account Value: {ctx.account_currency} {ctx.account_value:,.2f}
@@ -32,7 +35,7 @@ async def main(ctx):
     print("\033]0;Hermes\007", end="")  # Set terminal title
     os.system("clear")
     print(
-        f"""Creating session...
+        f"""
             {session_details}
         """
     )
@@ -47,12 +50,14 @@ async def main(ctx):
                     input = await session.prompt_async("> ")
 
                     if input == "orders":
-                        orders = ctx.client.get_orders()
+                        orders = ctx.client.get_orders(
+                            filter=GetOrdersRequest(nested=True)
+                        )
                         if orders:
-                            for o in orders:
-                                print(
-                                    f"{o.symbol} | {o.side.value} | {o.qty} | Type: {o.type.value} | Status: {o.status.value} | GTC: {o.time_in_force}"
-                                )
+                            orders_list = arranging_orders_for_printing(orders)
+                            df = pl.DataFrame(orders_list)
+                            print(df)
+
                         else:
                             print("No standing orders")
                     elif input == "positions":

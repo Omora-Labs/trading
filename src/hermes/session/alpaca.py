@@ -67,13 +67,16 @@ async def start_stream(ctx: TradingContext) -> None:
             print(f"   Stop Price: ${order.stop_price}")
 
         if data.event == "fill":
-            ctx.duckdb.log_trades(data, ctx.is_paper)
+            if order.filled_avg_price:
+                print(f"   Filled Price: ${order.filled_avg_price}")
+
             if order.position_intent in [
                 PositionIntent.BUY_TO_OPEN,
                 PositionIntent.SELL_TO_OPEN,
             ]:
                 pending = ctx.pending_orders[order.id]
                 print("Position opened! Submitting exit orders...")
+
                 handle_exit_orders(
                     ctx,
                     side=pending["side"],
@@ -84,9 +87,6 @@ async def start_stream(ctx: TradingContext) -> None:
                 )
 
                 del ctx.pending_orders[order.id]
-
-        if order.filled_avg_price:
-            print(f"   Filled Price: ${order.filled_avg_price}")
 
         print()  # Add blank line after update
 

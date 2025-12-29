@@ -30,7 +30,6 @@ def test_handle_order_entry_buy():
         account_value=10000,
         risk_reward=3,
         risk_amount=risk_pct * account_value,
-        duckdb=Mock(),
         account_currency="USD",
     )
 
@@ -78,7 +77,6 @@ def test_handle_order_entry_sell():
         account_value=10000,
         risk_reward=3,
         risk_amount=risk_pct * account_value,
-        duckdb=Mock(),
         account_currency="USD",
     )
 
