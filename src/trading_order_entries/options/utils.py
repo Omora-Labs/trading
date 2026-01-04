@@ -5,7 +5,7 @@ from alpaca.data.requests import OptionLatestQuoteRequest
 from alpaca.trading.enums import ContractType
 from alpaca.trading.requests import GetOptionContractsRequest
 
-from hermes.trading.orders.utils import get_latest_price
+from trading_order_entries.trading.orders.utils import get_latest_price
 
 
 def get_option_contract_request(symbol) -> GetOptionContractsRequest:

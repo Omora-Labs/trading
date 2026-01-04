@@ -1,5 +1,5 @@
-from hermes.context import TradingContext
-from hermes.options.utils import (
+from trading_order_entries.context import TradingContext
+from trading_order_entries.utils import (
     generate_option_request,
     get_contract_type_enum,
     get_option_contract_request,

@@ -1,6 +1,6 @@
-from hermes.context import TradingContext
-from hermes.session.alpaca import get_account_value, get_alpaca_clients
-from hermes.session.session import setup_session
+from trading_order_entries.context import TradingContext
+from trading_order_entries.session.alpaca import get_account_value, get_alpaca_clients
+from trading_order_entries.session.session import setup_session
 
 
 def get_trading_context() -> TradingContext:

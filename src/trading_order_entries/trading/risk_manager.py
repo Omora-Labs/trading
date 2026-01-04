@@ -1,4 +1,4 @@
-from hermes.context import TradingContext
+from trading_order_entries.context import TradingContext
 
 
 def set_qty(

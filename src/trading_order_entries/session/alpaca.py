@@ -7,8 +7,8 @@ from alpaca.trading.enums import PositionIntent
 from alpaca.trading.stream import TradingStream
 from dotenv import load_dotenv
 
-from hermes.context import TradingContext
-from hermes.trading.orders.main import handle_exit_orders
+from trading_order_entries.context import TradingContext
+from trading_order_entries.trading.orders.main import handle_exit_orders
 
 
 def _get_api_keys(is_paper) -> Tuple:
@@ -84,6 +84,7 @@ async def start_stream(ctx: TradingContext) -> None:
                     qty=pending["qty"],
                     stop_loss_price=pending["stop_loss_price"],
                     take_profit_price=pending["take_profit_price"],
+                    is_options=pending["is_options"],
                 )
 
                 del ctx.pending_orders[order.id]

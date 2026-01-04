@@ -7,12 +7,12 @@ from alpaca.trading.requests import GetOrdersRequest
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.shortcuts import PromptSession
 
-from hermes.options.main import parsing_options
-from hermes.session.alpaca import start_stream
-from hermes.session.main import get_trading_context
-from hermes.trading.orders.main import handle_order_entry
-from hermes.trading.orders.utils import get_latest_price
-from hermes.utils import arranging_orders_for_printing
+from trading_order_entries.options.main import parsing_options
+from trading_order_entries.session.alpaca import start_stream
+from trading_order_entries.session.main import get_trading_context
+from trading_order_entries.trading.orders.main import handle_order_entry
+from trading_order_entries.trading.orders.utils import get_latest_price
+from trading_order_entries.utils import arranging_orders_for_printing
 
 
 async def main(ctx):

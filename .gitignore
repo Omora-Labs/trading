@@ -1,6 +1,6 @@
 .env
 __pycache__
-hermes.egg-info
+*.egg-info
 .venv
 .pytest_cache
 build

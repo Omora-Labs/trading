@@ -6,7 +6,7 @@ from alpaca.trading.enums import (
     OrderSide,
 )
 
-from hermes.context import TradingContext
+from trading_order_entries.context import TradingContext
 
 
 def validate_orders(side: str, entry_price: float, stop_loss_price: float) -> bool:

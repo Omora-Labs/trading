@@ -43,6 +43,22 @@ def create_limit_order_with_stop(
     )
 
 
+def create_limit_order(
+    symbol: str,
+    qty: int,
+    side: OrderSide,
+    take_profit_price: float,
+) -> LimitOrderRequest:
+    return LimitOrderRequest(
+        symbol=symbol,
+        qty=qty,
+        side=side,
+        type=OrderType.LIMIT,
+        time_in_force=TimeInForce.GTC,
+        take_profit=TakeProfitRequest(limit_price=take_profit_price),
+    )
+
+
 def create_stop_order(
     symbol: str,
     qty: int,

@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-trading-order-entries = "trading-order-entries.main:cli"
+trading-order-entries = "trading_order_entries.main:cli"
 
 [tool.uv]
 package = true
