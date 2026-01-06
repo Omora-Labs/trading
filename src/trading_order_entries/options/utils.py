@@ -4,8 +4,6 @@ import questionary
 from alpaca.trading.enums import ContractType
 from alpaca.trading.requests import GetOptionContractsRequest
 
-from trading_order_entries.trading.orders.utils import get_latest_price
-
 
 def get_option_contract_request(
     symbol: str, contract_type: ContractType
@@ -24,7 +22,7 @@ def get_closest_strike(strikes: List[float], underlying_price: float) -> float:
 
 
 async def get_strike(ctx, underlying_symbol, strikes: List[float]) -> float:
-    underlying_price = get_latest_price(ctx, underlying_symbol)
+    # underlying_price = get_latest_price(ctx, underlying_symbol)
     closest_strike = get_closest_strike(strikes, underlying_price)
 
     return await questionary.select(

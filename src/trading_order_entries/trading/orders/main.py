@@ -10,7 +10,6 @@ from trading_order_entries.trading.orders.orders import (
 from trading_order_entries.trading.orders.utils import (
     get_entry_side_object,
     get_exit_side_object,
-    get_latest_price,
     get_qty_split,
     validate_orders,
 )
@@ -82,24 +81,23 @@ def handle_order_entry(
     ctx: TradingContext,
     side: str,
     stop_loss_price: float,
+    limit_price: float,
     symbol: str,
     is_options: bool,
 ):
     try:
-        entry_price = get_latest_price(ctx, symbol)
-        print(f"Entry price is {entry_price}")
-        validate_orders(side, entry_price, stop_loss_price)
+        validate_orders(side, limit_price, stop_loss_price)
         side = get_entry_side_object(side)
         print(
-            f"Risk amount: {ctx.risk_amount}, Entry: {entry_price}, Stop: {stop_loss_price}"
+            f"Risk amount: {ctx.risk_amount}, Entry: {limit_price}, Stop: {stop_loss_price}"
         )
-        qty = set_qty(entry_price, stop_loss_price, ctx.risk_amount, is_options)
+        qty = set_qty(limit_price, stop_loss_price, ctx.risk_amount, is_options)
         print(f"Calculated qty: {qty}")
         take_profit_price = define_take_profit_price(
-            ctx, entry_price, stop_loss_price, side
+            ctx, limit_price, stop_loss_price, side
         )
 
-        order = create_entry_order(symbol, qty, side)
+        order = create_entry_order(symbol, qty, side, limit_price, is_options)
         response = ctx.client.submit_order(order)
 
         ctx.pending_orders[response.id] = {

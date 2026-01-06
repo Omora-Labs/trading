@@ -1,5 +1,4 @@
 import asyncio
-import json
 import os
 
 import polars as pl
@@ -11,8 +10,10 @@ from trading_order_entries.options.main import parsing_options
 from trading_order_entries.session.alpaca import start_stream
 from trading_order_entries.session.main import get_trading_context
 from trading_order_entries.trading.orders.main import handle_order_entry
-from trading_order_entries.trading.orders.utils import get_latest_price
-from trading_order_entries.utils import arranging_orders_for_printing
+from trading_order_entries.utils import (
+    arranging_orders_for_printing,
+    arranging_positions_for_printing,
+)
 
 
 async def main(ctx):
@@ -24,9 +25,8 @@ async def main(ctx):
     Methods:
         * <orders> lists all standing orders
         * <positions> lists all positions
-        * <SPY> to get the current ask price
-        * <SPY buy 123> to buy AAPL with stop loss 123
-        * <SPY sell 123> to short AAPL with stop loss 123
+        * <SPY buy 123 321> to buy AAPL with stop loss 123 and limit price of 321
+        * <SPY sell 123 321> to short AAPL with stop loss 123 and limit price of 321
         * <chain SPY> to list option expiries and create an option order
         * <help> to list available methods
         * <exit> to leave
@@ -63,10 +63,10 @@ async def main(ctx):
                     elif input == "positions":
                         positions = ctx.client.get_all_positions()
                         if positions:
-                            for p in positions:
-                                print(
-                                    f"{p.symbol} | {p.qty} @ {p.avg_entry_price} | Market Value: {float(p.market_value):,.2f}"
-                                )
+                            positions_list = arranging_positions_for_printing(positions)
+                            df = pl.DataFrame(positions_list)
+                            print(df)
+
                         else:
                             print("No standing positions")
                     elif input == "help":
@@ -80,7 +80,11 @@ async def main(ctx):
 
                         if option_symbol:
                             stop_input = await session.prompt_async("Stop price: ")
+                            limit_price_input = await session.prompt_async(
+                                "Entry price: "
+                            )
                             stop_price = float(stop_input)
+                            limit_price = float(limit_price_input)
 
                             print(
                                 f"\nSubmitting order for {option_symbol} and stop price {stop_price}"
@@ -89,29 +93,27 @@ async def main(ctx):
                                 ctx,
                                 side="buy",
                                 stop_loss_price=stop_price,
+                                limit_price=limit_price,
                                 symbol=option_symbol,
                                 is_options=True,
                             )
                         else:
                             print("No option symbol found")
-
-                    elif len(input.split()) == 1:
-                        try:
-                            symbol = input.upper()
-                            entry_price = get_latest_price(ctx, symbol)
-                            print(f"Entry price is {entry_price}")
-                        except Exception as e:
-                            error_data = json.loads(str(e))
-                            print(f"Error submitting order: {error_data['message']}")
                     else:
-                        symbol, side, stop_loss = input.split()
+                        symbol, side, stop_loss, limit_price = input.split()
                         symbol = symbol.upper()
                         if side.lower() not in ["buy", "sell"]:
                             print("Side must be buy or sell")
                             continue
                         stop_loss_price = float(stop_loss)
+                        limit_price = float(limit_price)
                         handle_order_entry(
-                            ctx, side, stop_loss_price, symbol, is_options=False
+                            ctx,
+                            side,
+                            stop_loss_price,
+                            limit_price,
+                            symbol,
+                            is_options=False,
                         )
                 except Exception as e:
                     print(f"Error: {e}")

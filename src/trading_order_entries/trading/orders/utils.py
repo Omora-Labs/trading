@@ -1,11 +1,8 @@
 from typing import Tuple
 
-from alpaca.data.requests import StockLatestTradeRequest
 from alpaca.trading.enums import (
     OrderSide,
 )
-
-from trading_order_entries.context import TradingContext
 
 
 def validate_orders(side: str, entry_price: float, stop_loss_price: float) -> bool:
@@ -23,14 +20,6 @@ def get_entry_side_object(side: str) -> OrderSide:
 
 def get_exit_side_object(side: str) -> OrderSide:
     return OrderSide.SELL if side == "buy" else OrderSide.BUY
-
-
-def get_latest_price(ctx: TradingContext, symbol: str) -> float:
-    trade = ctx.stock_data.get_stock_latest_trade(
-        StockLatestTradeRequest(symbol_or_symbols=symbol)
-    )[symbol]
-
-    return trade.price
 
 
 def get_qty_split(qty: int) -> Tuple:

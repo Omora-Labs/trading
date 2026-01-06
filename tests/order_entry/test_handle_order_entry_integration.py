@@ -14,9 +14,6 @@ def test_handle_order_entry_buy():
 
     mock_stock_data = Mock()
     mock_option_data = Mock()
-    mock_quote = Mock()
-    mock_quote.ask_price = 100
-    mock_stock_data.get_stock_latest_quote.return_value = {"AAPL": mock_quote}
 
     risk_pct = 0.02
     account_value = 10000
@@ -34,7 +31,7 @@ def test_handle_order_entry_buy():
     )
 
     handle_order_entry(
-        ctx, side="buy", stop_loss_price=98, symbol="AAPL", is_options=False
+        ctx, side="buy", stop_loss_price=98, limit_price=100, symbol="AAPL", is_options=False
     )
 
     assert mock_client.submit_order.called
@@ -42,7 +39,7 @@ def test_handle_order_entry_buy():
     assert order.symbol == "AAPL"
     assert order.side == OrderSide.BUY
     assert order.qty == 100  # risk_amount=200, delta=2, qty=100
-    assert order.type == OrderType.MARKET
+    assert order.type == OrderType.LIMIT
 
     # Check pending_orders was populated
     assert "test-order-123" in ctx.pending_orders
@@ -61,9 +58,6 @@ def test_handle_order_entry_sell():
 
     mock_stock_data = Mock()
     mock_option_data = Mock()
-    mock_quote = Mock()
-    mock_quote.bid_price = 200
-    mock_stock_data.get_stock_latest_quote.return_value = {"TSLA": mock_quote}
 
     risk_pct = 0.02
     account_value = 10000
@@ -81,7 +75,7 @@ def test_handle_order_entry_sell():
     )
 
     handle_order_entry(
-        ctx, side="sell", stop_loss_price=205, symbol="TSLA", is_options=False
+        ctx, side="sell", stop_loss_price=205, limit_price=200, symbol="TSLA", is_options=False
     )
 
     assert mock_client.submit_order.called
@@ -89,7 +83,7 @@ def test_handle_order_entry_sell():
     assert order.symbol == "TSLA"
     assert order.side == OrderSide.SELL
     assert order.qty == 40  # risk_amount=200, delta=5, qty=40
-    assert order.type == OrderType.MARKET
+    assert order.type == OrderType.LIMIT
 
     # Check pending_orders was populated
     assert "test-order-456" in ctx.pending_orders
