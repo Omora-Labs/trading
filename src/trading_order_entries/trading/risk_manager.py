@@ -26,3 +26,12 @@ def define_take_profit_price(
 
 def define_price_delta(entry_price: float, stop_loss_price: float) -> float:
     return abs(entry_price - stop_loss_price)
+
+
+def assess_risk(
+    market_entry_price: float, stop_loss_price: float, qty: int, ctx: TradingContext
+):
+    risk_amount = abs(market_entry_price - stop_loss_price) * qty
+    risk_pct = (risk_amount / ctx.account_value) * 100
+
+    return risk_pct

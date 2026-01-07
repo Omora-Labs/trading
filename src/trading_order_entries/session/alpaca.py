@@ -1,5 +1,6 @@
 import asyncio
 import os
+from datetime import datetime
 from typing import Tuple
 
 from alpaca.data.historical import OptionHistoricalDataClient, StockHistoricalDataClient
@@ -14,6 +15,7 @@ from trading_analytics.processes.log_executions import (
 )
 from trading_order_entries.context import TradingContext
 from trading_order_entries.trading.orders.main import handle_exit_orders
+from trading_order_entries.trading.risk_manager import assess_risk
 
 order_locks = {}
 
@@ -89,6 +91,21 @@ async def start_stream(ctx: TradingContext) -> None:
                 async with lock:
                     print("Logging entry executions...")
                     trade_id = inserting_entry_executions(ctx, order)
+
+                risk_pct = assess_risk(
+                    order.filled_avg_price,
+                    pending["stop_loss_price"],
+                    pending["qty"],
+                    ctx,
+                )
+
+                ctx.risk_log.write(f"""
+                    Risk for recent open positions {datetime.now()}:
+                    Risk Pct: {risk_pct}%
+                    Symbol: {order.symbol}
+
+                    """)
+                ctx.risk_log.flush()  # type: ignore
 
                 print("Creating exit orders...")
                 handle_exit_orders(

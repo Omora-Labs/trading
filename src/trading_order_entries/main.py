@@ -37,13 +37,15 @@ async def main(ctx):
         * <exit> to leave
     """
 
-    print("\033]0;Hermes\007", end="")  # Set terminal title
+    print("\033]0;Omora Labs: Trading\007", end="")  # Set terminal title
     os.system("clear")
     print(
         f"""
             {session_details}
         """
     )
+
+    print(f"Account ID is {ctx.account_id} and account nr is {ctx.account_nr}")
 
     with patch_stdout():
         background_task = asyncio.create_task(start_stream(ctx))
@@ -90,10 +92,6 @@ async def main(ctx):
                             )
                             stop_price = float(stop_input)
                             indicative_price_input = float(indicative_price_input)
-
-                            print(
-                                f"\nSubmitting order for {option_symbol} and stop price {stop_price}"
-                            )
                             handle_order_entry(
                                 ctx,
                                 side="buy",
@@ -132,6 +130,7 @@ def cli():
     log_account_info(ctx)
     account_id = get_account_id(ctx)
     ctx.account_id = account_id
+    ctx.risk_log = open("risk.log", "a")
     log_account_snapshots(ctx)
     session_type = "Paper" if ctx.is_paper else "Live"
     print(f"Starting a {session_type} session now... \n")

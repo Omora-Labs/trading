@@ -42,7 +42,7 @@ def inserting_stop_orders(
 ) -> None:
     df = order_to_df(stop_order)
     df = df.select(
-        pl.col("id").alias("execution_id"),
+        pl.col("client_order_id").alias("order_id"),
         pl.col("created_at"),
         pl.col("stop_price"),
         pl.col("qty"),
@@ -64,10 +64,10 @@ def inserting_entry_executions(ctx: TradingContext, execution: Order) -> int:
     trade_id = handle_trade_id(executions, execution)
 
     df = df.select(
-        pl.lit(str(execution.id)).alias("order_id"),
-        pl.col("id").alias("execution_id"),
-        pl.col("created_at").dt.replace_time_zone(None),
-        pl.col("filled_at").dt.replace_time_zone(None),
+        pl.col("client_order_id").alias("order_id"),
+        pl.lit(str(execution.id)).alias("execution_id"),
+        pl.col("created_at"),
+        pl.col("filled_at"),
         pl.col("filled_avg_price"),
         pl.col("filled_qty"),
         pl.col("status"),
@@ -77,8 +77,6 @@ def inserting_entry_executions(ctx: TradingContext, execution: Order) -> int:
         pl.lit(trade_id).alias("trade_id"),
         pl.lit(ctx.account_id).alias("account_id"),
     )
-
-    print(df)
 
     ctx.db.log_executions(df)
     print("Executions inserted in DB")

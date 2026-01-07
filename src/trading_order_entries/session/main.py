@@ -23,4 +23,5 @@ def get_trading_context() -> TradingContext:
         account_currency=account_currency,
         risk_reward=risk_reward,
         risk_amount=risk_pct * account_value,
+        risk_log=None,
     )

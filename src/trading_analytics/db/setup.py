@@ -113,7 +113,7 @@ def setup_database():
         conn.execute("""
             CREATE TABLE IF NOT EXISTS stop_orders (
                 id INTEGER PRIMARY KEY DEFAULT nextval('stop_orders_seq'),
-                execution_id VARCHAR UNIQUE,
+                order_id VARCHAR UNIQUE,
                 created_at TIMESTAMP NOT NULL,
                 stop_price DOUBLE NOT NULL,
                 qty INTEGER NOT NULL,

@@ -102,7 +102,14 @@ def handle_order_entry(
     is_options: bool,
 ):
     try:
-        validate_orders(side, indicative_price_input, stop_loss_price)
+        validation = validate_orders(side, indicative_price_input, stop_loss_price)
+
+        if not validation:
+            print(
+                f"Your entry price is {indicative_price_input} and your stop price is {stop_loss_price} for an order of side {side}. That's not correct."
+            )
+            return
+
         side = get_entry_side_object(side)
         print(
             f"Risk amount: {ctx.risk_amount}, Entry: {indicative_price_input}, Stop: {stop_loss_price}"
@@ -116,6 +123,8 @@ def handle_order_entry(
         )
 
         order = create_entry_order(symbol, qty, side, is_options)
+
+        print(f"\nSubmitting order for {symbol}")
 
         response = ctx.client.submit_order(order)
 

@@ -51,9 +51,9 @@ def create_limit_order(
         symbol=symbol,
         qty=qty,
         side=side,
+        limit_price=take_profit_price,
         type=OrderType.LIMIT,
         time_in_force=time_in_force,
-        take_profit=TakeProfitRequest(limit_price=take_profit_price),
     )
 
 
