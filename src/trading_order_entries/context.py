@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from typing import Dict
-from uuid import UUID
 
 from alpaca.data.historical import OptionHistoricalDataClient, StockHistoricalDataClient
 from alpaca.trading.client import TradingClient
