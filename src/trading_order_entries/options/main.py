@@ -30,10 +30,9 @@ async def parsing_options(ctx: TradingContext, input: str) -> str | None:
             f"First contract type: {matching_contract[0].type}, Expected: {type_enum}"
         )
         typed_contracts = [c for c in matching_contract if c.type == type_enum]
-        print(f"Typed contracts: {len(typed_contracts)}, Type: {type_enum}")
 
         strikes = sorted(set(c.strike_price for c in typed_contracts))
-        selected_strike = await get_strike(ctx, underlying_symbol, strikes)
+        selected_strike = await get_strike(strikes)
 
         final_contract = next(
             c for c in typed_contracts if c.strike_price == float(selected_strike)

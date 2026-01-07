@@ -33,6 +33,7 @@ def get_trading_context() -> TradingContext:
         risk_pct=risk_pct,
         is_paper=is_paper,
         account_id=account_id,
+        account_nr=account_nr,
         account_value=account_value,
         account_currency=account_currency,
         risk_reward=risk_reward,

@@ -16,6 +16,7 @@ class TradingContext:
     risk_pct: float
     is_paper: bool
     account_id: int
+    account_nr: str
     account_value: float
     account_currency: str
     risk_reward: float

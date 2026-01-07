@@ -8,7 +8,7 @@ from trading_order_entries.context import TradingContext
 def prepare_account_info(ctx: TradingContext) -> pl.DataFrame:
     return pl.DataFrame(
         {
-            "account_id": ctx.account_id,
+            "account_number": ctx.account_nr,
             "currency": ctx.account_currency,
             "type": "Paper" if ctx.is_paper else "Live",
         }
@@ -20,7 +20,7 @@ def prepare_snapshots(ctx: TradingContext) -> pl.DataFrame:
         {
             "account_id": ctx.account_id,
             "last_equity": ctx.account_value,
-            "date": datetime.now(),
+            "date": datetime.now().date(),
         }
     )
 

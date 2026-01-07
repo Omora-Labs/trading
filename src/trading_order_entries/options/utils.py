@@ -3,6 +3,7 @@ from typing import List
 import questionary
 from alpaca.trading.enums import ContractType
 from alpaca.trading.requests import GetOptionContractsRequest
+from prompt_toolkit.shortcuts import prompt
 
 
 def get_option_contract_request(
@@ -21,8 +22,8 @@ def get_closest_strike(strikes: List[float], underlying_price: float) -> float:
     return min(strikes, key=lambda x: abs(x - underlying_price))
 
 
-async def get_strike(ctx, underlying_symbol, strikes: List[float]) -> float:
-    # underlying_price = get_latest_price(ctx, underlying_symbol)
+async def get_strike(strikes: List[float]) -> float:
+    underlying_price = await get_underlying_price()
     closest_strike = get_closest_strike(strikes, underlying_price)
 
     return await questionary.select(
@@ -32,6 +33,11 @@ async def get_strike(ctx, underlying_symbol, strikes: List[float]) -> float:
 
 async def get_option_type() -> str:
     return await questionary.select("Expiration:", choices=["Call", "Put"]).ask_async()
+
+
+async def get_underlying_price() -> float:
+    price = prompt("Insert current underlying price")
+    return float(price)
 
 
 async def get_selected_date(dates: List) -> str:
