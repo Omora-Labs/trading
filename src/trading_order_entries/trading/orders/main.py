@@ -113,7 +113,7 @@ def handle_order_entry(
             ctx, limit_price, stop_loss_price, side
         )
 
-        order = create_entry_order(symbol, qty, side, limit_price, is_options)
+        order = create_entry_order(symbol, qty, side, is_options)
 
         response = ctx.client.submit_order(order)
 
