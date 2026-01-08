@@ -44,8 +44,6 @@ async def main(ctx):
         """
     )
 
-    print(f"Account ID is {ctx.account_id} and account nr is {ctx.account_nr}")
-
     with patch_stdout():
         background_task = asyncio.create_task(start_stream(ctx))
         session = PromptSession()
@@ -129,7 +127,7 @@ def cli():
     log_account_info(ctx)
     account_id = get_account_id(ctx)
     ctx.account_id = account_id
-    ctx.risk_log = open("risk.log", "a")
+    ctx.risk_log = open("risk.log", "w")
     log_account_snapshots(ctx)
     session_type = "Paper" if ctx.is_paper else "Live"
     print(f"Starting a {session_type} session now... \n")

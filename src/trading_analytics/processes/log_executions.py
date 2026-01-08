@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 from uuid import UUID
 
@@ -9,8 +10,14 @@ from trading_order_entries.context import TradingContext
 
 def get_open_positions_symbol(df: pl.DataFrame) -> pl.DataFrame:
     return (
-        df.group_by("symbol")
-        .agg(pl.col("filled_qty").sum().alias("open_qty"))
+        df.group_by(["symbol", "trade_id"], maintain_order=True)
+        .agg(
+            pl.when(pl.col("position_intent").is_in(["buy_to_open", "sell_to_open"]))
+            .then(pl.col("filled_qty"))
+            .otherwise(-pl.col("filled_qty"))
+            .sum()
+            .alias("open_qty")
+        )
         .filter(pl.col("open_qty") != 0)
     )
 
@@ -41,12 +48,13 @@ def inserting_stop_orders(
     ctx: TradingContext, stop_order: Order, trade_id: int
 ) -> None:
     df = order_to_df(stop_order)
+
+    created_at = datetime.now()
+
     df = df.select(
-        pl.col("client_order_id").alias("order_id"),
-        pl.col("created_at"),
+        pl.lit(created_at).alias("created_at"),
         pl.col("stop_price"),
         pl.col("qty"),
-        pl.col("status"),
         pl.col("symbol"),
         pl.col("side"),
         pl.col("type"),
@@ -74,8 +82,8 @@ def inserting_entry_executions(ctx: TradingContext, execution: Order) -> int:
         pl.col("symbol"),
         pl.col("side"),
         pl.col("position_intent"),
-        pl.lit(trade_id).alias("trade_id"),
         pl.lit(ctx.account_id).alias("account_id"),
+        pl.lit(trade_id).alias("trade_id"),
     )
 
     ctx.db.log_executions(df)
@@ -98,7 +106,7 @@ def inserting_closing_executions(ctx: TradingContext, execution: Order) -> None:
 
     df = df.select(
         pl.lit(str(execution.id)).alias("order_id"),
-        pl.col("id").alias("execution_id"),
+        pl.lit(str(execution.id)).alias("execution_id"),
         pl.col("created_at"),
         pl.col("filled_at"),
         pl.col("filled_avg_price"),
@@ -107,8 +115,8 @@ def inserting_closing_executions(ctx: TradingContext, execution: Order) -> None:
         pl.col("symbol"),
         pl.col("side"),
         pl.col("position_intent"),
-        pl.lit(trade_id).alias("trade_id"),
         pl.lit(ctx.account_id).alias("account_id"),
+        pl.lit(trade_id).alias("trade_id"),
     )
 
     ctx.db.log_executions(df)

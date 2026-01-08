@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Tuple
 
+import polars as pl
 from alpaca.data.historical import OptionHistoricalDataClient, StockHistoricalDataClient
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import PositionIntent
@@ -89,18 +90,23 @@ async def start_stream(ctx: TradingContext) -> None:
                     trade_id = inserting_entry_executions(ctx, order)
 
                 risk_pct = assess_risk(
-                    order.filled_avg_price,
-                    pending["stop_loss_price"],
-                    pending["qty"],
+                    float(order.filled_avg_price),
+                    float(pending["stop_loss_price"]),
+                    float(pending["qty"]),
                     ctx,
                 )
 
-                ctx.risk_log.write(f"""
-                    Risk for recent open positions {datetime.now()}:
-                    Risk Pct: {risk_pct}%
-                    Symbol: {order.symbol}
-
-                    """)
+                ctx.risk_log.write(
+                    "NEW POSITION:\n"
+                    + pl.DataFrame(
+                        {
+                            "Symbol": [order.symbol],
+                            "Opened At": [datetime.now()],
+                            "Risk Pct %": [round(risk_pct, 2)],
+                        }
+                    ).__str__()
+                    + "\n\n"
+                )
                 ctx.risk_log.flush()  # type: ignore
 
                 print("Creating exit orders...")

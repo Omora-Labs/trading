@@ -37,18 +37,16 @@ class DuckDBConnector:
 
         self.conn.execute(
             """INSERT INTO stop_orders (
-                order_id,
                 created_at,
                 stop_price,
                 qty,
-                status,
                 symbol,
                 side,
                 type,
                 account_id,
                 trade_id
             )
-            SELECT * FROM df ON CONFLICT (execution_id) DO NOTHING
+            SELECT * FROM df
             """
         )
 
@@ -96,7 +94,7 @@ class DuckDBConnector:
                 account_id,
                 trade_id
             )
-            SELECT * FROM df ON CONFLICT (execution_id) DO NOTHING
+            SELECT * FROM df
             """
         )
 
