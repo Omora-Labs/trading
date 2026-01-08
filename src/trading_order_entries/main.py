@@ -26,7 +26,6 @@ async def main(ctx):
     Trading Mode: {"Paper" if ctx.is_paper else "Live"}
     Risk Percentage: {ctx.risk_pct * 100}%
     Risk Reward: {ctx.risk_reward}
-    Account Value: {ctx.account_currency} {ctx.account_value:,.2f}
     Methods:
         * <orders> lists all standing orders
         * <positions> lists all positions

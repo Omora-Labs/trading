@@ -52,10 +52,6 @@ def get_account_value(client: TradingClient) -> Tuple:
     account_currency = account.currency
     account_nr = account.account_number
 
-    print(
-        f"Account value for risk calculations today is {account_currency} {account_value:,.2f}"
-    )
-
     return account_value, account_currency, account_nr
 
 

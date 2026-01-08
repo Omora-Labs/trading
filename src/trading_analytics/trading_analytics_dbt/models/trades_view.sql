@@ -48,7 +48,7 @@ join first_execution fe on ta.trade_id = fe.trade_id
 join account_snapshots acc_snap on ta.date_opened = acc_snap.date
 join entry_executions entry on ta.trade_id = entry.trade_id
 left join exit_executions exit on ta.trade_id = exit.trade_id
-left join stop_orders so
+left join stop_orders so on ta.trade_id = so.trade_id
     on so.symbol = fe.symbol
     and date(so.created_at) = date(fe.filled_at)
     and so.created_at > fe.filled_at
