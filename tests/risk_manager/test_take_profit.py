@@ -21,6 +21,7 @@ def test_take_profit_buy():
         risk_reward=risk_reward,
         risk_amount=risk_pct * account_value,
         account_currency="USD",
+        risk_log=None,
     )
     tp = define_take_profit_price(ctx, entry_price=100, stop_loss_price=98, side="buy")
     assert tp == 106  # delta=2, reward=2*3=6, 100+6=106
@@ -43,6 +44,7 @@ def test_take_profit_sell():
         risk_reward=risk_reward,
         risk_amount=risk_pct * account_value,
         account_currency="USD",
+        risk_log=None,
     )
     tp = define_take_profit_price(
         ctx, entry_price=100, stop_loss_price=102, side="sell"

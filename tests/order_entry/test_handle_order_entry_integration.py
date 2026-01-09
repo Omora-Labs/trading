@@ -32,10 +32,11 @@ def test_handle_order_entry_buy():
         risk_reward=3,
         risk_amount=risk_pct * account_value,
         account_currency="USD",
+        risk_log=None,
     )
 
     handle_order_entry(
-        ctx, side="buy", stop_loss_price=98, limit_price=100, symbol="AAPL", is_options=False
+        ctx, side="buy", stop_loss_price=98, indicative_price_input=100, symbol="AAPL", is_options=False
     )
 
     assert mock_client.submit_order.called
@@ -80,10 +81,11 @@ def test_handle_order_entry_sell():
         risk_reward=3,
         risk_amount=risk_pct * account_value,
         account_currency="USD",
+        risk_log=None,
     )
 
     handle_order_entry(
-        ctx, side="sell", stop_loss_price=205, limit_price=200, symbol="TSLA", is_options=False
+        ctx, side="sell", stop_loss_price=205, indicative_price_input=200, symbol="TSLA", is_options=False
     )
 
     assert mock_client.submit_order.called
