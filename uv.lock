@@ -290,6 +290,21 @@ wheels = [
 ]
 
 [[package]]
+name = "dbt-duckdb"
+version = "1.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dbt-adapters" },
+    { name = "dbt-common" },
+    { name = "dbt-core" },
+    { name = "duckdb" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d7/a3/1286f14a03b3475a5349139e200d6522eed4d6b41932245df6d9bf401eb8/dbt_duckdb-1.10.0.tar.gz", hash = "sha256:9da9603840f153a5713991553748ba89084930a83fe8a7936cd65b006b70c3ee", size = 139822, upload-time = "2025-11-05T15:08:59.679Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/91/32/62d2b3e98a6d76fe541e8299e60a35a75f1ee46b28bacf43a46fcc192713/dbt_duckdb-1.10.0-py3-none-any.whl", hash = "sha256:8bfc534d6e2eb732af5bda2e5681b70f5159e4adb52bdc8ef0dbe911c1314334", size = 82889, upload-time = "2025-11-05T15:08:57.963Z" },
+]
+
+[[package]]
 name = "dbt-extractor"
 version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1154,6 +1169,7 @@ dependencies = [
     { name = "alpaca-py" },
     { name = "asyncio" },
     { name = "dbt-core" },
+    { name = "dbt-duckdb" },
     { name = "duckdb" },
     { name = "polars" },
     { name = "prompt-toolkit" },
@@ -1173,6 +1189,7 @@ requires-dist = [
     { name = "alpaca-py", specifier = ">=0.43.2" },
     { name = "asyncio", specifier = ">=4.0.0" },
     { name = "dbt-core", specifier = ">=1.11.2" },
+    { name = "dbt-duckdb", specifier = ">=1.10.0" },
     { name = "duckdb", specifier = ">=1.4.3" },
     { name = "polars", specifier = ">=1.36.1" },
     { name = "prompt-toolkit", specifier = ">=3.0.52" },

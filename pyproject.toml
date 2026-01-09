@@ -8,6 +8,7 @@ dependencies = [
     "alpaca-py>=0.43.2",
     "asyncio>=4.0.0",
     "dbt-core>=1.11.2",
+    "dbt-duckdb>=1.10.0",
     "duckdb>=1.4.3",
     "polars>=1.36.1",
     "prompt-toolkit>=3.0.52",

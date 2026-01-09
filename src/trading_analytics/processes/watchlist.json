@@ -1,14 +1,5 @@
 {
   "pets": [
-    ""
   ],
-  "gappers": [
-    "ANPA",
-    "KALV",
-    "TLRY",
-    "RKT",
-    "OSCR",
-    "UWMC",
-    "COMP"
-  ]
+  "gappers": [""]
 }

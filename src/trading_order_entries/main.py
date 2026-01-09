@@ -31,7 +31,7 @@ async def main(ctx):
         * <positions> lists all positions
         * <SPY buy 123 321> to buy AAPL with stop loss 123 and limit price of 321
         * <SPY sell 123 321> to short AAPL with stop loss 123 and limit price of 321
-        * <chain SPY> to list option expiries and create an option order
+        * <chain SPY> to list option expiries and create an option order 
         * <help> to list available methods
         * <exit> to leave
     """
