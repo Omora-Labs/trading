@@ -5,8 +5,8 @@ with monthly_performance as (
 )
 
 select
-    extract(year from month) as year,
+    substring(month, -4, 4) as year,
     avg(total_return_pct),
     avg(nr_of_trades)
 from monthly_performance
-group by extract(year from month)
+group by substring(month, -4, 4)

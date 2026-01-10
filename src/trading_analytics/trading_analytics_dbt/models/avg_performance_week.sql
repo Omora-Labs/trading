@@ -5,8 +5,8 @@ with weekly_performance as (
 )
 
 select
-    extract(isoyear from week) as year,
+    substring(week, 1, 4) as year,
     avg(total_return_pct),
     avg(nr_of_trades)
 from weekly_performance
-group by extract(isoyear from week)
+group by substring(week, 1, 4)
