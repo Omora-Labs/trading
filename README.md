@@ -51,3 +51,7 @@ uv run dbt run
 - `closed_trades`: Fully closed positions only
 - `trades_view`: Enhanced trade metrics with risk/reward calculations
 - `avg_performance_month`: Monthly aggregated performance metrics
+
+## License
+
+This project is licensed under the MIT License.
