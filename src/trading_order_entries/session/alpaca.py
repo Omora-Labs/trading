@@ -84,6 +84,7 @@ async def start_stream(ctx: TradingContext) -> None:
                     float(pending["stop_loss_price"]),
                     int(pending["qty"]),
                     ctx,
+                    is_options=pending["is_options"],
                 )
 
                 ctx.risk_log.write(

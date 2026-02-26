@@ -5,7 +5,6 @@ from alpaca.trading.enums import TimeInForce
 from trading_order_entries.context import TradingContext
 from trading_order_entries.trading.orders.orders import (
     create_entry_order,
-    create_limit_order,
     create_limit_order_with_stop,
     create_stop_order,
 )
@@ -49,16 +48,11 @@ def handle_exit_orders_options(
     symbol: str,
     qty: int,
     stop_loss_price: float,
-    take_profit_price: float,
 ) -> None:
     side = get_exit_side_object(side)
 
-    order_limit = create_limit_order(
-        symbol, qty, side, take_profit_price, TimeInForce.DAY
-    )
     order_stop = create_stop_order(symbol, qty, side, stop_loss_price, TimeInForce.DAY)
 
-    ctx.client.submit_order(order_limit)
     ctx.client.submit_order(order_stop)
 
 
@@ -72,9 +66,7 @@ def handle_exit_orders(
     is_options: bool,
 ):
     if is_options:
-        handle_exit_orders_options(
-            ctx, side, symbol, qty, stop_loss_price, take_profit_price
-        )
+        handle_exit_orders_options(ctx, side, symbol, qty, stop_loss_price)
     else:
         handle_exit_orders_commons(
             ctx, side, symbol, qty, stop_loss_price, take_profit_price

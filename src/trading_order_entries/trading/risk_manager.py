@@ -29,9 +29,10 @@ def define_price_delta(entry_price: float, stop_loss_price: float) -> float:
 
 
 def assess_risk(
-    market_entry_price: float, stop_loss_price: float, qty: int, ctx: TradingContext
+    market_entry_price: float, stop_loss_price: float, qty: int, ctx: TradingContext, is_options: bool = False
 ):
-    risk_amount = abs(market_entry_price - stop_loss_price) * qty
+    multiplier = 100 if is_options else 1
+    risk_amount = abs(market_entry_price - stop_loss_price) * qty * multiplier
     risk_pct = (risk_amount / ctx.account_value) * 100
 
     return risk_pct
