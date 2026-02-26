@@ -1,4 +1,3 @@
-from trading_analytics.db.db import DuckDBConnector
 from trading_order_entries.context import TradingContext
 from trading_order_entries.session.alpaca import get_account_value, get_alpaca_clients
 from trading_order_entries.session.session import setup_session
@@ -8,7 +7,6 @@ def get_trading_context() -> TradingContext:
     is_paper, risk_pct, risk_reward = setup_session()
     client, stock_data, option_data = get_alpaca_clients(is_paper)
     account_value, account_currency, account_nr = get_account_value(client)
-    db = DuckDBConnector()
 
     return TradingContext(
         client=client,

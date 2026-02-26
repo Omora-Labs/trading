@@ -14,8 +14,6 @@ def test_handle_order_entry_buy():
 
     mock_stock_data = Mock()
     mock_option_data = Mock()
-    mock_db = Mock()
-
     risk_pct = 0.02
     account_value = 10000
 
@@ -23,7 +21,6 @@ def test_handle_order_entry_buy():
         client=mock_client,
         stock_data=mock_stock_data,
         option_data=mock_option_data,
-        db=mock_db,
         account_id=1,
         account_nr="test123",
         risk_pct=0.02,
@@ -63,8 +60,6 @@ def test_handle_order_entry_sell():
 
     mock_stock_data = Mock()
     mock_option_data = Mock()
-    mock_db = Mock()
-
     risk_pct = 0.02
     account_value = 10000
 
@@ -72,7 +67,6 @@ def test_handle_order_entry_sell():
         client=mock_client,
         stock_data=mock_stock_data,
         option_data=mock_option_data,
-        db=mock_db,
         account_id=1,
         account_nr="test456",
         risk_pct=0.02,

@@ -1,11 +1,13 @@
 import asyncio
 import os
+import subprocess
 
 import polars as pl
 from alpaca.trading.requests import GetOrdersRequest
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.shortcuts import PromptSession
 
+from trading_order_entries.context import TradingContext
 from trading_order_entries.options.main import parsing_options
 from trading_order_entries.session.alpaca import start_stream
 from trading_order_entries.session.main import get_trading_context
@@ -16,7 +18,7 @@ from trading_order_entries.utils import (
 )
 
 
-async def main(ctx):
+async def main(ctx: TradingContext):
     session_details = f"""
     Trading Mode: {"Paper" if ctx.is_paper else "Live"}
     Risk Percentage: {ctx.risk_pct * 100}%
@@ -26,7 +28,7 @@ async def main(ctx):
         * <positions> lists all positions
         * <SPY buy 123 321> to buy AAPL with stop loss 123 and limit price of 321
         * <SPY sell 123 321> to short AAPL with stop loss 123 and limit price of 321
-        * <chain SPY> to list option expiries and create an option order 
+        * <chain SPY> to list option expiries and create an option order
         * <help> to list available methods
         * <exit> to leave
     """
@@ -117,15 +119,17 @@ async def main(ctx):
             background_task.cancel()
 
 
-def cli():
-    ctx = get_trading_context()
-    log_account_info(ctx)
-    account_id = get_account_id(ctx)
-    ctx.account_id = account_id
+def open_risk_logging(ctx: TradingContext) -> None:
     ctx.risk_log = open("risk.log", "w")
-    log_account_snapshots(ctx)
+    log_path = os.path.abspath("risk.log")
+    subprocess.Popen(["osascript", "-e", f'tell app "Terminal" to do script "tail -f {log_path}"'])
+
+
+def cli() -> None:
+    ctx = get_trading_context()
     session_type = "Paper" if ctx.is_paper else "Live"
     print(f"Starting a {session_type} session now... \n")
+    open_risk_logging(ctx)
     asyncio.run(main(ctx))
 
 

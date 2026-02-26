@@ -1,4 +1,3 @@
-import asyncio
 import os
 from datetime import datetime
 from typing import Tuple
@@ -10,10 +9,6 @@ from alpaca.trading.enums import PositionIntent
 from alpaca.trading.stream import TradingStream
 from dotenv import load_dotenv
 
-from trading_analytics.processes.log_executions import (
-    inserting_closing_executions,
-    inserting_entry_executions,
-)
 from trading_order_entries.context import TradingContext
 from trading_order_entries.trading.orders.main import handle_exit_orders
 from trading_order_entries.trading.risk_manager import assess_risk
@@ -74,7 +69,6 @@ async def start_stream(ctx: TradingContext) -> None:
             print(f"   Stop Price: ${order.stop_price}")
 
         if data.event == "fill":
-            lock = order_locks.setdefault(order.id, asyncio.Lock())
             if order.filled_avg_price:
                 print("Position opened!")
                 print(f"   Filled Price: ${order.filled_avg_price}")
@@ -85,14 +79,10 @@ async def start_stream(ctx: TradingContext) -> None:
             ]:
                 pending = ctx.pending_orders[order.id]
 
-                async with lock:
-                    print("Logging entry executions...")
-                    trade_id = inserting_entry_executions(ctx, order)
-
                 risk_pct = assess_risk(
                     float(order.filled_avg_price),
                     float(pending["stop_loss_price"]),
-                    float(pending["qty"]),
+                    int(pending["qty"]),
                     ctx,
                 )
 
@@ -118,15 +108,9 @@ async def start_stream(ctx: TradingContext) -> None:
                     stop_loss_price=pending["stop_loss_price"],
                     take_profit_price=pending["take_profit_price"],
                     is_options=pending["is_options"],
-                    trade_id=trade_id,
                 )
 
                 del ctx.pending_orders[order.id]
-
-            else:  # it's buy or sell to close:
-                async with lock:
-                    print("Logging exit executions...")
-                    trade_id = inserting_closing_executions(ctx, order)
 
         print()  # Add blank line after update
 
